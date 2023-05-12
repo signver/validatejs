@@ -1,0 +1,11 @@
+{
+  "name": "scripts-build-lib",
+  "version": "1.0.0",
+  "description": "",
+  "bin": {
+    "build-lib": "index.js"
+  },
+  "type": "module",
+  "author": "Chua Siang Poh",
+  "license": "MIT"
+}
