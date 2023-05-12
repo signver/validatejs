@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "jest --coverage",
-    "build": "tsc && build-lib"
+    "build": "tsc"
   },
   "type": "module",
   "author": "Chua Siang Poh",
