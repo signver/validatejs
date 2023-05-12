@@ -1,9 +1,9 @@
-import { ObjectValidationValueFunction } from "./validation-value-function";
+import { ValidationFunction } from "./validation-function";
 
 export type ObjectValidationDescriptor<
   ValidationErrorInfo,
   Value extends {}
 > = {
-  [key in keyof Value]: ObjectValidationValueFunction<ValidationErrorInfo, Value[key]>;
+  [key in keyof Value]: ValidationFunction<ValidationErrorInfo, Value[key]>;
 };
 
