@@ -4,16 +4,6 @@ import {
   ValidationFunction,
 } from "./types";
 
-export interface objectValidate<
-  ValidationErrorInfo,
-  ObjectValue extends {} = {}
-> {
-  (
-    value: ObjectValue,
-    validations: ObjectValidationDescriptor<ValidationErrorInfo, ObjectValue>
-  ): ObjectValidationResult<ValidationErrorInfo, ObjectValue>;
-}
-
 export function objectValidate<
   ValidationErrorInfo,
   ObjectValue extends {} = {}
