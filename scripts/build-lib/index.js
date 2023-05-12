@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+import esbuild from 'esbuild'
+import { loadESBuildConfig, print } from './utils/index.js'
 
-import { loadESBuildConfig } from './utils/index.js'
-
-const build = await loadESBuildConfig()
-console.log(build)
+const buildOptions = await loadESBuildConfig()
+await esbuild.build(buildOptions)
+print.ok('Build complete.')
