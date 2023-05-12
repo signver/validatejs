@@ -1,0 +1,1 @@
+export type ValidationFunction<ValidationErrorInfo, Value = any> = (val: Value) => ValidationErrorInfo[]
