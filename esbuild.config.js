@@ -4,7 +4,6 @@ export default {
     entryPoints: [
         "src/index.ts"
     ],
-    outbase: "./",
     outdir: "lib",
     platform: "neutral",
     target: 'esnext'

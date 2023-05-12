@@ -6,6 +6,7 @@
   "files": [
     "libs"
   ],
+  "types": "./lib/index.d.ts",
   "engines": {
     "node": ">=18"
   },
