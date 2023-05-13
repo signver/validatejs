@@ -1,1 +1,2 @@
-export type ValidationFunction<ValidationErrorInfo, Value = any> = (val: Value) => ValidationErrorInfo[]
+import { ObjectValidationResult } from './object-validation-result'
+export type ValidationFunction<ValidationErrorInfo, Value = any> = (val: Value) => ObjectValidationResult<ValidationErrorInfo, Value>

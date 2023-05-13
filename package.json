@@ -1,8 +1,8 @@
 {
   "name": "@signver/validatejs",
   "version": "1.0.0",
-  "description": "Simple library to validate flat json objects.",
-  "main": "lib/index.ts",
+  "description": "Simple library to validate json objects.",
+  "main": "./lib/index.js",
   "files": [
     "lib"
   ],
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "jest --coverage",
-    "build": "tsc && build-lib"
+    "build": "tsc"
   },
   "type": "module",
   "author": "Chua Siang Poh",

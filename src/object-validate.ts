@@ -1,26 +1,25 @@
 import {
+  EntryOf,
   ObjectValidationDescriptor,
   ObjectValidationResult,
   ValidationFunction,
-} from "./types";
+} from "./types"
 
-export function objectValidate<
-  ValidationErrorInfo,
-  ObjectValue extends {} = {}
->(
-  candidate: ObjectValue,
-  validations: ObjectValidationDescriptor<ValidationErrorInfo, ObjectValue>
-): ObjectValidationResult<ValidationErrorInfo, ObjectValue> {
-  return Object.entries(validations).reduce((result, entry) => {
-    const [key, validate] = entry as [
-      keyof typeof candidate,
-      ValidationFunction<
-        ValidationErrorInfo,
-        (typeof candidate)[keyof typeof candidate]
-      >
-    ];
-    const validationResult = validate(candidate[key as keyof typeof candidate]);
-    if (validationResult.length) result[key] = validationResult
-    return result;
-  }, {} as ObjectValidationResult<ValidationErrorInfo, ObjectValue>);
+export function validate<ValidationErrorInfo, Value>(value: Value, validations: ObjectValidationDescriptor<ValidationErrorInfo, Value>) {
+  const isNull = value === null
+  const isObject = !isNull && typeof value === 'object'
+  const isFunction = typeof validations === 'function'
+
+  if (!isObject || isFunction) return (validations as ValidationFunction<ValidationErrorInfo, Value>)(value)
+  return (Object.entries(validations) as [keyof typeof validations, ObjectValidationDescriptor<ValidationErrorInfo, EntryOf<typeof value, keyof typeof value>>][])
+    .reduce((result, [key, validator]) => {
+      const valueToValidate = value[key as keyof typeof value]
+      Object.assign(
+        result,
+        {
+          [key]: validate(valueToValidate as any, validator as ObjectValidationDescriptor<ValidationErrorInfo, any>)
+        }
+      )
+      return result
+    }, {} as ObjectValidationResult<ValidationErrorInfo, Value>)
 }
