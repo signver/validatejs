@@ -1,7 +1,7 @@
 {
   "name": "@signver/validatejs",
   "version": "1.0.0",
-  "description": "Simple library to validate flat json objects.",
+  "description": "Simple ts library to validate json objects.",
   "main": "lib/index.ts",
   "files": [
     "lib"

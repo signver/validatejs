@@ -1,80 +1,70 @@
-import { objectValidate } from "./object-validate";
+import { validate } from "./object-validate"
+import { ObjectValidationDescriptor } from "./types"
 
-describe("objectValidate", () => {
-  it("should return empty", () => {
-    const value = {};
-    const validations = {};
-    const result = objectValidate(value, validations);
-    expect(Object.entries(result).length).toBe(0);
-  });
-  it("should call validation functions", () => {
-    const value = {
-      stringValue1: "a",
-      numberValue1: 0,
-    };
-    const validations = {
-      stringValue1: (x: any) => [],
-      numberValue1: (x: any) => [],
-    };
-    const spies = Object.keys(validations).map((key) => {
-      return {
-        key,
-        spy: jest.spyOn(validations, key as keyof typeof validations),
-      };
-    });
-    objectValidate(value, validations);
-    spies.forEach(({ key, spy }) => {
-      expect(spy).toBeCalledWith(value[key as keyof typeof value]);
-    });
-  });
-  it("should omit keys without error(s)", () => {
-    const tooShortError = "too short";
-    const invalidFormatError = "invalid format";
-    const tooSmallError = "too small";
-    const isZeroError = "cannot be zero";
-    const validateString = (x: string) => {
-      const result = [];
-      if (x.length < 2) {
-        result.push(tooShortError);
+describe("validate", () => {
+  describe("non-objects", () => {
+    it("should return validation result", () => {
+      const errorList = ['too small']
+      const input = 1
+      const validator = jest.fn((value: number) => {
+        if (value < 2) return errorList
+        return []
+      })
+      const result = validate(
+        input,
+        validator
+      )
+      expect(validator).toBeCalledWith(1)
+      expect(result).toBe(errorList)
+    })
+  })
+  describe("objects", () => {
+    it("can be validated by a function", () => {
+      const errorList = ['error 1', 'error 2']
+      const input = {
+        test1: 1,
+        test2: [],
+        test3: {
+          test4: {}
+        }
       }
-      if (x.startsWith("aa")) {
-        result.push(invalidFormatError);
+      const validator: ObjectValidationDescriptor<string, typeof input> = jest.fn((input) => errorList)
+      const result = validate(
+        input,
+        validator
+      )
+      expect(validator).toBeCalledWith(input)
+      expect(result).toBe(errorList)
+    })
+    it("can be deep validated", () => {
+      const errorList = [['error 1'], ['error 2']]
+      const input = {
+        test1: 1,
+        test2: [],
+        test3: {
+          test4: {}
+        }
       }
-      return result;
-    };
-    const validateNumber = (x: number) => {
-      const result = [];
-      if (x < 2) {
-        result.push(tooSmallError);
+      const validationFn1 = jest.fn(function validation<V>(val: V) { return errorList[0] })
+      const validationFn2 = jest.fn(function validation<V>(val: V) { return errorList[1] })
+      const validator: ObjectValidationDescriptor<string, typeof input> = {
+        test2: validationFn1,
+        test3: {
+          test4: validationFn2
+        }
       }
-      if (x === 0) {
-        result.push(isZeroError);
-      }
-      return result;
-    };
-    const value = {
-      stringValue1: "a",
-      stringValue2: "aa",
-      stringValue3: "aba",
-      numberValue1: 0,
-      numberValue2: 1,
-      numberValue3: 2,
-    };
-    const validations = {
-      stringValue1: validateString,
-      stringValue2: validateString,
-      stringValue3: validateString,
-      numberValue1: validateNumber,
-      numberValue2: validateNumber,
-      numberValue3: validateNumber,
-    };
-    const validationResult = {
-      stringValue1: [tooShortError],
-      stringValue2: [invalidFormatError],
-      numberValue1: [tooSmallError, isZeroError],
-      numberValue2: [tooSmallError],
-    };
-    const result = objectValidate(value, validations);
-    expect(result).toMatchObject(validationResult);
-  });
-});
+      const result = validate(
+        input,
+        validator
+      )
+      expect(validationFn1).toBeCalledWith(input.test2)
+      expect(validationFn2).toBeCalledWith(input.test3.test4)
+      expect(result).toMatchObject({
+        test2: errorList[0],
+        test3: {
+          test4: errorList[1]
+        }
+      })
+    })
+  })
+})
